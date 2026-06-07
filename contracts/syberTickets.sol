@@ -5,10 +5,12 @@ import "hardhat/console.sol";
 contract syberTickets {
 
     address public ticketMaster;
+    uint256 totalEvents;
 
     constructor(
         ) {
             ticketMaster = msg.sender;
+            totalEvents = 0;
         }
 
     modifier onlyTicketMaster {
@@ -16,26 +18,107 @@ contract syberTickets {
 		_;
 	}
 
+    struct Event {
+        uint256 id;
+        string name;
+        uint256 date;
+        uint256 buyAmount;
+        uint256 returnAmount;
+        uint256 maxSupply;
+        address creator;
+    }
+    //We will require many nested mappings
+    //We will require many nested mappings
+    //We will require many nested mappings
+    //We will require many nested mappings
+    //We will require many nested mappings
+    event Transfer();
+    event Sell();
+    event Return();
 
-    //events to track major functionalities
-    //core functionalities
+    function createEvent(string _name, uint256 _date, uint256 _buyAmount, uint256 _returnAmount, uint256 _maxSupply) public {
+        mintAllTokens(ticketMaster);
+        totalEvents++;
+    }
 
-    //1. Mint  - mints ticket nfts
+    function _mint(address to, uint256 tokenId) internal virtual {
+		require(to != address(0), "ERC: mint to the zero address");
+		require(!_exists[tokenId], "Token already exists");
+		
+		balance[to]++;
+		owner[tokenId] = to;
+		_exists[tokenId] = true;
 
-    //2.  MintAll - run at createion of event to print all tickets as assign owner as the ticketmaster address
+		emit Transfer(address(0), to, tokenId);
+	}
 
-    //3. Create Event - creates a new ticketed event which runs the mintAll with given parameters.  This will likly be some kind of 
-    // struct for outlining particulars about different events  eventId and TokenId(within event)
+    function mint(address to, uint256 tokenId) public virtual {
+		require(to != address(0), "ERC: mint to the zero address");
+		require(totalSupply < maxSupply, "All Tickets Minted");
 
-    //3. balanceOf - returns total owner tickets #
+		_mint(to, tokenId);
+		totalSupply++;
+	}
 
-    //4. ownerOf - returns the owner of a specific ticket
+    function mintAllTokens(address to) public onlyTicketMaster{
+		for(uint256 i = 0; i < maxSupply; i++) {
+			mint(to , i , i.toString());
+		}
+	}
 
-    // create a tokenURI and setTokenURI - needed for token data
+    function buyTicket(address to, uint256 eventId, uint256 tokenId) payable public {
+		require(balance[msg.sender] < 2, "Each address can only own a maximum of two tickets");
+		require(to != address(0), "Transfer to a zero address");
+		require(ticketMaster == owner[tokenId], "This ticket is already sold");
+		require(to == ticketMaster, 'Only ticketMaster can sell tickets');
+		require(msg.value == sellAmount, 'Input Price does not match ticket price');
+		
+		owner[tokenId] = msg.sender;
+		balance[to]--;
+		balance[msg.sender]++;
 
-    //5. Buy ticket to, eventId, tokenId
+		(bool success, ) = to.call{value: msg.value}("");
+		require(success, "Transfer failed");
 
-    //6. returnTicket to, eventId, tokenId
+		emit Sell(to, msg.sender, tokenId, msg.value);
+	}
+
+	function returnTicket(address to, uint256 eventId, uint256 tokenId) public payable {
+		require(to == owner[tokenId], "Return value not being sent to ticket holder");
+		require(msg.sender == owner[tokenId], "You are not the ticket holder");
+		
+		owner[tokenId] = ticketMaster;
+		balance[to]--;
+		balance[ticketMaster]++;
+
+		address payable toPayable = payable(to);
+		withdraw(toPayable);		
+
+		emit Return(to, msg.sender, tokenId, returnAmount);
+	}
+
+    function balanceOf(address owner, uint256 eventId) external virtual view returns (uint256) {
+		return balance[eventId][owner];
+	}
+
+    //this one will need more logic
+	function ownerOf(uint256 tokenId, uint256 eventId) external virtual view returns (address) {
+		return owner[tokenId];
+	}
+
+    function cancelTicket(address to, uint256 eventId, uint256 tokenId) payable onlyTicketMaster public {
+		require(to == owner[tokenId], "You are not the ticket holder");
+		require(msg.value == returnAmount, 'Input Price does not match return value');
+		
+		owner[tokenId] = ticketMaster;
+		balance[to]--;
+		balance[msg.sender]++;
+
+		(bool success, ) = to.call{value: msg.value}("");
+		require(success, "Transfer failed");
+
+		emit Return(to, msg.sender, tokenId, msg.value);
+	}
 
     function adminDeposit() onlyTicketMaster external payable {
 		require(msg.value > 0, "Amount must be greater than 0");
