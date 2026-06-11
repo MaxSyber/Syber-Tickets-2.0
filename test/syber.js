@@ -71,6 +71,7 @@ describe('Tickets', () => {
 		expect(args2.tokenId).to.equal(27)
 	})
   })
+
   describe('Buying and Returning' , () => {
 	beforeEach(async () => {
 		transaction = await tickets.connect(user1).createEvent("The Bigger Event", 42, tokens(10), tokens(8), 30)
@@ -116,7 +117,6 @@ describe('Tickets', () => {
 		expect(args.tokenId).to.equal(0)
 		expect(args.eventId).to.equal(0)
 	})
-	
   })
 
   describe('Failure Cases' , () => {
@@ -171,7 +171,24 @@ describe('Tickets', () => {
 		transaction = await tickets.connect(user1).buyTicket(0,0, {value: tokens(10)})
 		transaction = await expect(tickets.connect(user2).returnTicket(0,0)).to.be.revertedWith("You are not the ticket holder")
 	})
-	
+
+	it("Rejects Admin cancelTicket if Event Doesnt Exist", async function () {
+		transaction = await tickets.connect(user1).createEvent("The Biggest Event", 42, tokens(10), tokens(8), 30)
+		transaction = await tickets.connect(user1).buyTicket(0,0, {value: tokens(10)})
+		transaction = await expect(tickets.connect(deployer).cancelTicket(user1.address,1,0)).to.be.revertedWith("Event does not exist")
+	})
+
+	it("Rejects Admin cancelTicket if Token Doesnt Exist", async function () {
+		transaction = await tickets.connect(user1).createEvent("The Biggest Event", 42, tokens(10), tokens(8), 30)
+		transaction = await tickets.connect(user1).buyTicket(0,0, {value: tokens(10)})
+		transaction = await expect(tickets.connect(deployer).cancelTicket(user1.address,0,31)).to.be.revertedWith("Token does not exist")
+	})
+
+	it("Rejects Admin cancelTicket if Targeted User is not Token Owner", async function () {
+		transaction = await tickets.connect(user1).createEvent("The Biggest Event", 42, tokens(10), tokens(8), 30)
+		transaction = await tickets.connect(user2).buyTicket(0,0, {value: tokens(10)})
+		transaction = await expect(tickets.connect(deployer).cancelTicket(user1.address,0,0)).to.be.revertedWith("That is not the ticket holder")
+	})
   })
 
   describe('Admin Actions' , () => { 
@@ -191,7 +208,6 @@ describe('Tickets', () => {
 		expect(args.amount).to.equal(tokens(110))
 	})
 
-	
 	it("Processes Admin Withdraws", async function () {
 		transaction = await tickets.connect(user1).createEvent("The Biggest Event", 42, tokens(10), tokens(8), 30)
 		transaction = await tickets.connect(user1).buyTicket(0,0, {value: tokens(10)})
@@ -211,6 +227,32 @@ describe('Tickets', () => {
 		const args = adminWEmit.args
 		expect(args.to).to.equal(deployer.address)
 		expect(args.amount).to.equal(tokens(4))
+	})
+
+	it('Admin Returns ticket and Transfers Ownership with cancelTicket', async function () {
+		transaction = await tickets.connect(user1).createEvent("The Biggest Event", 42, tokens(10), tokens(8), 30)
+		transaction = await tickets.connect(user1).buyTicket(0,0, {value: tokens(10)})
+		const balanceBefore = await ethers.provider.getBalance(user1.address)
+		await transaction.wait()
+		transaction = await tickets.connect(deployer).cancelTicket(user1.address, 0,0)
+		const balanceAfter = await ethers.provider.getBalance(user1.address)
+		expect(await tickets.owner(0, 0)).to.equal(deployer.address)
+		expect(await tickets.balance(0, user1.address)).to.equal(0)
+		expect(await tickets.balance(0, deployer.address)).to.equal(30)
+		expect(balanceBefore).to.be.lessThan(balanceAfter)
+	})
+
+	it('Emits An Admin Return Event', async function () {
+		transaction = await tickets.connect(user1).createEvent("The Biggest Event", 42, tokens(10), tokens(8), 30)
+		transaction = await tickets.connect(user1).buyTicket(0,0, {value: tokens(10)})
+		transaction = await tickets.connect(deployer).cancelTicket(user1.address, 0,0)
+		AdminReturn = await transaction.wait()
+		const emit = AdminReturn.events[0]
+		const args = emit.args
+		expect(args.to).to.equal(user1.address)
+		expect(args.from).to.equal(deployer.address)
+		expect(args.tokenId).to.equal(0)
+		expect(args.eventId).to.equal(0)
 	})
   })
 })
