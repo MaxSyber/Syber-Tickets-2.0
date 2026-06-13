@@ -1,10 +1,11 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 
-import Navbar from './componets/Navbar';
+import Navbar from './components/Navbar';
+
+import {loadProvider, loadNetwork, loadAccount} from './store/interactions'
 
 function App() {
-
   const dispatch = useDispatch()
 
   const loadBlockchainData = async () => {
@@ -19,12 +20,18 @@ function App() {
       window.location.reload()
     })
 
-    // Fetch current account from Metamask when changed
     window.ethereum.on('accountsChanged', async () => {await loadAccount(dispatch)})
+  }
+
+  useEffect(() => {
+    loadBlockchainData()
+  }, [])
 
   return (
     <div className="App">
       <Navbar />
+
+      
     </div>
   );
 }

@@ -1,7 +1,9 @@
 import { ethers } from "ethers";
 import { setProvider, setNetwork, setAccount } from "./reducers/provider";
 
-import SYBERTICKETS_ABI from '../abis/'
+import SYBERTICKETS_ABI from '../abis/SYBERTICKETS_ABI.json'
+
+import config from '../config.json'
 
 export const loadProvider = (dispatch) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -25,11 +27,11 @@ export const loadAccount = async (dispatch) => {
     return account
 }
 
-export const loadTickets = async (provider, chainId, dispatch) => {
-    const tickets = new ethers.Contract(config[chainId].dapp.address, SYBERTICKETS_ABI, provider)
+//export const loadTickets = async (provider, chainId, dispatch) => {
+//   const tickets = new ethers.Contract(config[chainId].syberTickets.address, SYBERTICKETS_ABI, provider)
 
-    dispatch(setContract(tickets))
-}
+//   dispatch(setContract(tickets))
+//}
 
 //load balances
 

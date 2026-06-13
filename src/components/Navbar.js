@@ -2,18 +2,19 @@ import { useSelector, useDispatch } from 'react-redux'
 import { loadAccount } from '../store/interactions'
 
 const Navbar = () => {
+    const provider = useSelector(state => state.provider.connection)
     const chainId = useSelector(state => state.provider.chainId)
     const account = useSelector(state => state.provider.account)
     const dispatch = useDispatch()
 
     const connectHandler = async () => {
-		await loadAccount(provider, dispatch)
+		await loadAccount(dispatch)
 	} 
 
     return(
         <div className=''>
 			<div className=''>
-				<img src= {Logo} className='' alt='Logo'/>
+				{/*} <img src= {Logo} className='' alt='Logo'/> */}
 				<span>SYBER TICKETS</span>
 			</div>
 		 		<div>
