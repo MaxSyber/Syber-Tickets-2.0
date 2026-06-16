@@ -8,6 +8,8 @@ const Navbar = () => {
     const account = useSelector(state => state.provider.account)
     const dispatch = useDispatch()
 
+	
+
     const connectHandler = async () => {
 		await loadAccount(dispatch)
 	} 

@@ -70,6 +70,23 @@ describe('Tickets', () => {
 		const args2 = emit2.args
 		expect(args2.tokenId).to.equal(27)
 	})
+	
+	it("Emits a EventCreated for each new Event", async function () {
+		const event = result.events.find(
+      	(e) => e.event === "EventCreated");
+
+		expect(event).to.not.be.undefined;
+
+		const args3 = event.args;
+
+		expect(args3.eventId).to.equal(0);
+		expect(args3.name).to.equal("The Big Event");
+		expect(args3.date).to.equal(42);
+		expect(args3.buyAmount).to.equal(tokens(10));
+		expect(args3.returnAmount).to.equal(tokens(8));
+		expect(args3.maxSupply).to.equal(30);
+		expect(args3.creator).to.equal(user1.address);
+	})
   })
 
   describe('Buying and Returning' , () => {

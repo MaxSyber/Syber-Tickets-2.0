@@ -47,6 +47,16 @@ contract syberTickets {
 		uint256 indexed tokenId
 	);
 
+	event EventCreated(
+		uint256 indexed eventId,
+		string name,
+		uint256 date,
+		uint256 buyAmount,
+		uint256 returnAmount,
+		uint256 maxSupply,
+		address creator
+	);
+
     event Sell(
 		address indexed to,
 		address indexed from,
@@ -87,6 +97,8 @@ contract syberTickets {
 			creator: msg.sender
 		});
         mintAllTokens(ticketMaster, eventId);
+
+		emit EventCreated(eventId, _name, _date, _buyAmount, _returnAmount, _maxSupply, msg.sender);
         totalEvents++;
     }
 

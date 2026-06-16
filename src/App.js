@@ -5,7 +5,7 @@ import Navbar from './components/Navbar';
 import Intro from './components/Intro'
 import Events from './components/Events'
 
-import {loadProvider, loadNetwork, loadAccount} from './store/interactions'
+import {loadProvider, loadNetwork, loadAccount, loadTickets} from './store/interactions'
 
 function App() {
   const dispatch = useDispatch()
@@ -23,6 +23,8 @@ function App() {
     })
 
     window.ethereum.on('accountsChanged', async () => {await loadAccount(dispatch)})
+
+    await loadTickets(provider, chainId, dispatch)
   }
 
   useEffect(() => {
