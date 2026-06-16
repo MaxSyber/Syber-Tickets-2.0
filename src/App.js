@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
 import Navbar from './components/Navbar';
+import Intro from './components/Intro'
+import Events from './components/Events'
 
 import {loadProvider, loadNetwork, loadAccount} from './store/interactions'
 
@@ -31,6 +33,9 @@ function App() {
     <div className="App">
       <Navbar />
 
+      <Intro />
+
+      <Events />
       
     </div>
   );

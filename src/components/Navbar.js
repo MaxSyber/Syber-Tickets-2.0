@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { loadAccount } from '../store/interactions'
+import Logo from '../assets/logo.png'
 
 const Navbar = () => {
     const provider = useSelector(state => state.provider.connection)
@@ -12,18 +13,18 @@ const Navbar = () => {
 	} 
 
     return(
-        <div className=''>
-			<div className=''>
-				{/*} <img src= {Logo} className='' alt='Logo'/> */}
+        <div className='navbar'>
+			<div className='title'>
+				<img src= {Logo} className='' alt='Logo'/>
 				<span>SYBER TICKETS</span>
 			</div>
 		 		<div>
 		 			{account ? (
-		 				<button className=''>
+		 				<button className='account'>
 		 					{account.slice(0,5) +'...' + account.slice(38,42)}
 		 				</button>
 		 			) : (
-		 				<button className='' onClick={connectHandler}>Connect</button>
+		 				<button className='connect' onClick={connectHandler}>Connect</button>
 		 			)}
 		 		</div>	 		
 		</div>
