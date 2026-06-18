@@ -7,10 +7,10 @@ const browseHandler = () => {
 const createHandler = () => {
     console.log('Create Event Clicked')
 }
-
+// Put this into componet to log state
+//const state = useSelector(state => state)
+//console.log("ACTUAL STATE:", state)
 const Intro = () => {
-    const state = useSelector(state => state)
-	console.log("ACTUAL STATE:", state)
     return(
         <div style={{ paddingTop: "100px", color: "white" }}className=''>
             <div>Syber Tickets is a web 3.0 ticketing application that's reshaping the very essence of event ticketing. 

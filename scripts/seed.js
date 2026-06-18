@@ -34,7 +34,7 @@ async function main() {
     transaction = await tickets.connect(user2).createEvent('Teletubbie Party', date2, tokens(100), tokens(90), 35)
     await transaction.wait()
 
-    console.log(`Creating Event 3...\n`)
+    console.log(`Creating Event 3.newcheck..\n`)
     date3 = 1829782800;
     transaction = await tickets.connect(user3).createEvent('Company Christmas Party', date3, tokens(10), tokens(9), 26)
     await transaction.wait()

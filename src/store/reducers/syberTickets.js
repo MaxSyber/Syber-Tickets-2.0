@@ -1,23 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
-    contract: null,
-    events: [],
-    buying: {
-      isBuying: false,
-      isSuccess: false,
-      transactionHash: null
-    },
-    returning: {
-      isBuying: false,
-      isSuccess: false,
-      transactionHash: null
-    },
-    canceling: {
-      isBuying: false,
-      isSuccess: false,
-      transactionHash: null
-    }
+  contract: null,
+  events: [],
+  ticketsRemaining: {},
+  userBalances: {},
+  buying: {
+    isBuying: false,
+    isSuccess: false,
+    transactionHash: null
+  },
+  returning: {
+    isReturning: false,
+    isSuccess: false,
+    transactionHash: null
+  },
+  canceling: {
+    isCanceling: false,
+    isSuccess: false,
+    transactionHash: null
   }
+}
+
 export const syberTickets = createSlice({
   name: 'syberTickets',
   initialState,
@@ -29,49 +32,60 @@ export const syberTickets = createSlice({
     eventsLoaded: (state, action) => {
         state.events = action.payload
     },
-    buyRequest: (state, action) => {
-      state.depositing.isDepositing = true
-      state.depositing.isSuccess = false
-      state.depositing.transactionHash = null
-    },
-    buySuccess: (state, action) => {
-      state.depositing.isDepositing = false
-      state.depositing.isSuccess = true
-      state.depositing.transactionHash = action.payload
-    },
-    buyFail: (state, action) => {
-      state.depositing.isDepositing = false
-      state.depositing.isSuccess = false
-      state.depositing.transactionHash = null
+
+    ticketsRemainingLoaded: (state, action) => {
+      const { eventId, value } = action.payload
+      state.ticketsRemaining[eventId] = value
     },
 
-    retrunRequest: (state, action) => {
-      state.withdrawing.isWithdrawing = true
-      state.withdrawing.isSuccess = false
-      state.withdrawing.transactionHash = null
+    userBalancesLoaded: (state, action) => {
+      const { eventId, value } = action.payload
+      state.userBalances[eventId] = value
+    },
+
+    buyRequest: (state, action) => {
+      state.buying.isBuying = true
+      state.buying.isSuccess = false
+      state.buying.transactionHash = null
+    },
+    buySuccess: (state, action) => {
+      state.buying.isBuying = false
+      state.buying.isSuccess = true
+      state.buying.transactionHash = action.payload
+    },
+    buyFail: (state, action) => {
+      state.buying.isBuying = false
+      state.buying.isSuccess = false
+      state.buying.transactionHash = null
+    },
+
+    returnRequest: (state, action) => {
+      state.returning.isReturning = true
+      state.returning.isSuccess = false
+      state.returning.transactionHash = null
     },
     returnSuccess: (state, action) => {
-      state.withdrawing.isWithdrawing = false
-      state.withdrawing.isSuccess = true
-      state.withdrawing.transactionHash = action.payload
+      state.returning.isReturning = false
+      state.returning.isSuccess = true
+      state.returning.transactionHash = action.payload
     },
     returnFail: (state, action) => {
-      state.withdrawing.isWithdrawing = false
-      state.withdrawing.isSuccess = false
-      state.withdrawing.transactionHash = null
+      state.returning.isReturning = false
+      state.returning.isSuccess = false
+      state.returning.transactionHash = null
     },
     cancelRequest: (state, action) => {
-      state.swapping.isSwaping = true
-      state.swapping.isSuccess = false
-      state.swapping.transactionHash = null
+      state.canceling.isCanceling = true
+      state.canceling.isSuccess = false
+      state.canceling.transactionHash = null
     },
     cancelSuccess: (state, action) => {
-      state.swapping.isSwaping = false
-      state.swapping.isSuccess = true
+      state.canceling.isCanceling = false
+      state.canceling.isSuccess = true
       state.swapping.transactionHash = action.payload
     },
     cancleFail: (state, action) => {
-      state.swapping.isSwaping = false
+      state.canceling.isCanceling = false
       state.swapping.isSuccess = false
       state.swapping.transactionHash = null
     }
@@ -79,7 +93,7 @@ export const syberTickets = createSlice({
 })
 
 export const {
-  setContract, eventsLoaded, buyRequest, buySuccess, buyFail, retrunRequest, 
+  setContract, eventsLoaded, buyRequest, buySuccess, buyFail, ticketsRemainingLoaded, userBalancesLoaded, returnRequest,
   returnSuccess, returnFail, cancelRequest, cancelSuccess, cancleFail} = syberTickets.actions;
 
 export default syberTickets.reducer;

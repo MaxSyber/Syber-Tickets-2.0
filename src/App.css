@@ -82,6 +82,56 @@ body {
 
 .infoButton {
   display: flex;
-  background: radial-gradient(50% 50% at 50% 50%, #97B1AF 0%, rgba(161, 187, 186, 0.7) 100%);
+  background: linear-gradient(
+    135deg,
+    #4dd2ff 0%,   /* bright electric cyan */
+    #1aa3ff 50%,  /* strong tech blue */
+    #0077ff 100%  /* deep electric edge */
+  );
+  border-radius: 12px;
+  text-align: center;
+  color: black;
+  font-size: 1.5vw;
+  cursor:  pointer;
 }
 /* Browns Events Css*/
+
+.buy {
+  background: linear-gradient(
+    135deg,
+    #4dd2ff 0%,   /* bright electric cyan */
+    #1aa3ff 50%,  /* strong tech blue */
+    #0077ff 100%  /* deep electric edge */
+  );
+  border-radius: 12px;
+  text-align: center;
+  color: black;
+  font-size: 1.5vw;
+  cursor:  pointer;
+}
+
+.buy_gray{
+  border-radius: 12px;
+  text-align: center;
+  color: black;
+  font-size: 1.5vw;
+  cursor:  pointer;
+  background: radial-gradient(50% 50% at 50% 50%, #97B1AF 0%, rgba(161, 187, 186, 0.7) 100%);
+}
+
+.return{
+  border-radius: 12px;
+  text-align: center;
+  color: black;
+  font-size: 1.5vw;
+  cursor:  pointer;
+  background: radial-gradient(50% 50% at 50% 50%, #97B1AF 0%, rgba(161, 187, 186, 0.7) 100%);
+}
+
+.return_gray{
+  border-radius: 12px;
+  text-align: center;
+  color: black;
+  font-size: 1.5vw;
+  cursor:  pointer;
+}

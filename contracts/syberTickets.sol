@@ -128,6 +128,33 @@ contract syberTickets {
 		totalSupply[eventId] = max;
 	}
 
+	function getAvailableTokens(uint256 eventId) public view returns (uint256[] memory) {
+    	return availableTokens[eventId];
+	}
+
+	function getOwnedTokens(uint256 eventId, address user) public view returns (uint256[] memory) {
+		uint256 max = eventData[eventId].maxSupply;
+		uint256 count = 0;
+
+		for (uint256 i = 0; i < max; i++) {
+			if (owner[eventId][i] == user) {
+				count++;
+			}
+		}
+
+		uint256[] memory result = new uint256[](count);
+		uint256 index = 0;
+
+		for (uint256 i = 0; i < max; i++) {
+			if (owner[eventId][i] == user) {
+				result[index] = i;
+				index++;
+			}
+		}
+
+		return result;
+	}
+
 	function _removeAvailableToken(uint256 eventId, uint256 tokenId) internal {
 		uint256[] storage arr = availableTokens[eventId];
 

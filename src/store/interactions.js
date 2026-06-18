@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { setProvider, setNetwork, setAccount } from "./reducers/provider";
-import { setContract, eventsLoaded, buyRequest, buySuccess, buyFail, retrunRequest, 
+import { setContract, eventsLoaded, ticketsRemainingLoaded, userBalancesLoaded, buyRequest, buySuccess, buyFail, returnRequest, 
   returnSuccess, returnFail, cancelRequest, cancelSuccess, cancleFail } from "./reducers/syberTickets";
 
 import SYBERTICKETS_ABI from '../abis/SYBERTICKETS_ABI.json'
@@ -36,7 +36,6 @@ export const loadTickets = async (provider, chainId, dispatch) => {
 }
 
 export const loadEvents = async (provider, tickets, dispatch) => {
-
     const block = await provider.getBlockNumber()
     const eventStream = await tickets.queryFilter('EventCreated', 0, block)
     const events = eventStream.map(event => {
@@ -56,23 +55,75 @@ export const loadEvents = async (provider, tickets, dispatch) => {
     })
 
     dispatch(eventsLoaded(events))
-}
 
-export const loadTicketsRemaining = async (provider, tickets, eventId, dispatch) => {
     const ticketMaster = await tickets.ticketMaster()
-    const ticketsRemaining = await tickets.balanceOf[eventId][ticketMaster]
+    for (let event of events) {
+        const eventId = event.eventId
+        const ticketsRemaining = await tickets.balanceOf(ticketMaster, eventId)
+
+        dispatch(ticketsRemainingLoaded({
+            eventId,
+            value: Number(ticketsRemaining)
+        }))
+    }
 }
 
-export const buyTicket = async (provider, tickets, eventId, dispatch) => {
-    
+export const loadEventData = async (provider, tickets, events, dispatch) => {
+    const signer = await provider.getSigner()
+    const user = await signer.getAddress()
+    const ticketMaster = await tickets.ticketMaster()
+
+    for (let event of events) {
+        const eventId = event.eventId
+        const userBalance = await tickets.balanceOf(user , eventId)
+
+        dispatch(userBalancesLoaded({
+            eventId,
+            value: Number(userBalance)
+        }))
+
+        const ticketsRemaining = await tickets.balanceOf(ticketMaster, eventId)
+
+        dispatch(ticketsRemainingLoaded({
+            eventId,
+            value: Number(ticketsRemaining)
+        }))
+    }
+}
+
+export const buyTicket = async (provider, tickets, eventId, buyAmount, dispatch) => {
+    try {
+        dispatch(buyRequest())
+
+        const signer = await provider.getSigner()
+        const availableTokens = await tickets.getAvailableTokens(eventId)
+        const randomIndex = Math.floor(Math.random() * availableTokens.length)
+        const tokenId = availableTokens[randomIndex]
+        let transaction = await tickets.connect(signer).buyTicket(eventId, tokenId, {value: buyAmount})
+        await transaction.wait()
+
+        dispatch(buySuccess(transaction.hash))
+    } catch (error) {
+        dispatch(buyFail())
+    }
+}
+
+export const returnTicket = async (provider, tickets, eventId, dispatch) => {
+    try {
+        dispatch(returnRequest())
+
+        const signer = await provider.getSigner()
+        const user = await signer.getAddress()
+        const ownedTokens = await tickets.getOwnedTokens(eventId, user)
+        const tokenId = ownedTokens[0]
+        let transaction = await tickets.connect(signer).returnTicket(eventId, tokenId)
+        await transaction.wait()
+
+        dispatch(returnSuccess(transaction.hash))
+    } catch (error) {
+        dispatch(returnFail())
+    }
 }
 
 
-
-//load balances
-
-//load events
-
-//buyticket
-
-//sellticket
+//admin cancel ticket
