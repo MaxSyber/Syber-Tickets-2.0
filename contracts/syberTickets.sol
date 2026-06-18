@@ -40,11 +40,15 @@ contract syberTickets {
 
 	// Total minted tickets: eventId > total minted tickets
 	mapping(uint256 => uint256) public totalSupply;
+
+	//This will map all remaining available tokens in each event
+	mapping(uint256 => uint256[]) public availableTokens;
    
     event Transfer(
 		address indexed from,
 		address indexed to,
-		uint256 indexed tokenId
+		uint256 tokenId,
+		uint256 indexed eventId
 	);
 
 	event EventCreated(
@@ -110,17 +114,30 @@ contract syberTickets {
 		owner[eventId][tokenId] = to;
 		exists[eventId][tokenId] = true;
 
-		emit Transfer(address(0), to, tokenId);
+		emit Transfer(address(0), to, tokenId, eventId);
 	}
 
     function mintAllTokens(address to, uint256 eventId) internal {
 		require(eventData[eventId].maxSupply > 0, "Event does not exist");
 		uint256 max = eventData[eventId].maxSupply;
 		for(uint256 i = 0; i < max; i++) {
+			availableTokens[eventId].push(i);
 			_mint(to , eventId, i);
 		}
 
 		totalSupply[eventId] = max;
+	}
+
+	function _removeAvailableToken(uint256 eventId, uint256 tokenId) internal {
+		uint256[] storage arr = availableTokens[eventId];
+
+		for (uint256 i = 0; i < arr.length; i++) {
+			if (arr[i] == tokenId) {
+				arr[i] = arr[arr.length - 1];
+				arr.pop();
+				break;
+			}
+		}
 	}
 
     function buyTicket(uint256 eventId, uint256 tokenId) payable public {
@@ -138,6 +155,8 @@ contract syberTickets {
 		balance[eventId][ticketMaster]--;
 		balance[eventId][buyer]++;
 
+		_removeAvailableToken(eventId, tokenId);
+
 		emit Sell(buyer, seller, eventId, tokenId, msg.value);
 	}
 
@@ -148,6 +167,8 @@ contract syberTickets {
 		owner[eventId][tokenId] = ticketMaster;
 		balance[eventId][msg.sender]--;
 		balance[eventId][ticketMaster]++;
+
+		availableTokens[eventId].push(tokenId);
 
 		uint256 refund = eventData[eventId].returnAmount;
 
@@ -176,6 +197,8 @@ contract syberTickets {
 		owner[eventId][tokenId] = ticketMaster;
 		balance[eventId][to]--;
 		balance[eventId][ticketMaster]++;
+
+		availableTokens[eventId].push(tokenId);
 
 		(bool success, ) = to.call{value: refund}("");
 		require(success, "Transfer failed");

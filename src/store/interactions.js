@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import { setProvider, setNetwork, setAccount } from "./reducers/provider";
-import { setContract, eventsLoaded } from "./reducers/syberTickets";
+import { setContract, eventsLoaded, buyRequest, buySuccess, buyFail, retrunRequest, 
+  returnSuccess, returnFail, cancelRequest, cancelSuccess, cancleFail } from "./reducers/syberTickets";
 
 import SYBERTICKETS_ABI from '../abis/SYBERTICKETS_ABI.json'
 
@@ -29,7 +30,7 @@ export const loadAccount = async (dispatch) => {
 }
 
 export const loadTickets = async (provider, chainId, dispatch) => {
-   const tickets = new ethers.Contract(config[chainId].syberTickets.address, SYBERTICKETS_ABI, provider)
+   const tickets = await new ethers.Contract(config[chainId].syberTickets.address, SYBERTICKETS_ABI, provider)
 
    dispatch(setContract(tickets))
 }
@@ -56,6 +57,17 @@ export const loadEvents = async (provider, tickets, dispatch) => {
 
     dispatch(eventsLoaded(events))
 }
+
+export const loadTicketsRemaining = async (provider, tickets, eventId, dispatch) => {
+    const ticketMaster = await tickets.ticketMaster()
+    const ticketsRemaining = await tickets.balanceOf[eventId][ticketMaster]
+}
+
+export const buyTicket = async (provider, tickets, eventId, dispatch) => {
+    
+}
+
+
 
 //load balances
 
