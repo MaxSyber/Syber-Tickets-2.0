@@ -8,16 +8,15 @@ const Navbar = () => {
     const account = useSelector(state => state.provider.account)
     const dispatch = useDispatch()
 
-	
-
     const connectHandler = async () => {
 		await loadAccount(dispatch)
 	} 
 
     return(
-        <div className='navbar'>
+        <div>
+			<div className='navbar'>
+			<img src= {Logo} className='logo' alt='Logo'/>
 			<div className='title'>
-				<img src= {Logo} className='' alt='Logo'/>
 				<span>SYBER TICKETS</span>
 			</div>
 		 		<div>
@@ -29,6 +28,13 @@ const Navbar = () => {
 		 				<button className='connect' onClick={connectHandler}>Connect</button>
 		 			)}
 		 		</div>	 		
+			</div>
+			<ul className='navTopics'>
+				<li className='topic'><a href='' className='topicLink'>About</a></li>
+				<li className='topic'><a href='' className='topicLink'>Browse Events</a></li>
+				<li className='topic'><a href='' className='topicLink'>Create Event</a></li>
+				<li className='topic'><a href ='' className='topicLink'>F.A.Q</a></li>
+			</ul>
 		</div>
     )
 }

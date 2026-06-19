@@ -125,5 +125,18 @@ export const returnTicket = async (provider, tickets, eventId, dispatch) => {
     }
 }
 
+export const newEvent = async (provider, tickets, name, date, buyAmount, returnAmount, maxSupply) => {
+    try {
+        const signer = await provider.getSigner()
+        let transaction = await tickets.connect(signer).createEvent(name, date, buyAmount, returnAmount, maxSupply)
+        await transaction.wait()
+
+        return transaction
+    } catch (error) {
+        console.error('newEvent error', error)
+        throw error
+    }
+}
+
 
 //admin cancel ticket

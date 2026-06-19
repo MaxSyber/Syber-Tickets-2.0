@@ -46,27 +46,38 @@ const Events = () => {
     }, [provider, tickets, events, account, buyingSuccess, returningSuccess, dispatch])
 
     return(
-        <div style={{ paddingTop: "100px", color: "white" }}className=''>
+        <div className='events_list'>
             {events.map(event => (
-                <div key={event.eventId} style={{marginBottom: '20px'}}>
-                    <h3>{event.name}</h3>
-                    <p>Price : {ethers.utils.formatEther(event.buyAmount)}</p>
-                    <p>Date: {new Date(event.date * 1000).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric"
-                    })} </p>
-
-                    <button className="buy" onClick={() => buyHandler(event.eventId)}>
-                        Buy
-                    </button>
-                    <button className="return" onClick={() => returnHandler(event.eventId)}>Return</button>
-                    {ticketsRemaining[event.eventId] === 0 ? (
-                        <p>Sold Out</p>
-                        ) : (
-                        <p>Tickets Remaining: {ticketsRemaining[event.eventId]}</p>
+                <div className='card' key={event.eventId}>
+                    <div className='cart_left'>
+                        <h3 className='event_name'>{event.name}</h3>
+                        <p className='event_meta'>Date: {new Date(event.date * 1000).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric"
+                        })} </p>
+                        <p className='event_meta'>Price : {ethers.utils.formatEther(event.buyAmount)}</p>
+                        <p className='event_meta'>Event Creator:  {(event.creator.slice(0,5) +'...' + event.creator.slice(38,42))}</p>  
+                        {ticketsRemaining[event.eventId] === 0 ? (
+                            <p className='sold'>Sold Out</p>
+                            ) : (
+                            <p className='event_meta'>Tickets Remaining: {ticketsRemaining[event.eventId]}</p>
                         )}
-                    <p> Your Owned Tickets: {balanceOf[event.eventId]}</p>
+                    </div>
+                    <div className='card_right'>
+                        <button className="buy" onClick={() => buyHandler(event.eventId)}>
+                            Buy
+                        </button>
+                        <button
+                            className={`return ${balanceOf[event.eventId] === 0 ? "disabled" : ""}`}
+                            onClick={() => returnHandler(event.eventId)}
+                            disabled={balanceOf[event.eventId] === 0}
+                        >
+                            Return
+                        </button>
+                        
+                        <p className='event_meta'> Your Owned Tickets: {balanceOf[event.eventId]}</p>
+                    </div>
                 </div>
             ))} 		
         </div>

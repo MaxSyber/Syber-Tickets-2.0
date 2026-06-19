@@ -88,7 +88,7 @@ contract syberTickets {
 	);
 
     function createEvent(string memory _name, uint256 _date, uint256 _buyAmount, uint256 _returnAmount, uint256 _maxSupply) public {
-		require(_maxSupply > 10 && _maxSupply <= 5000, "Max supply must be within range 10-5000");
+		require(_maxSupply >= 10 && _maxSupply <= 225, "Max supply must be within range 10-225");
 		require(_buyAmount >= _returnAmount, "Return Amount must be less than or equal to buy Amount");
 		uint256 eventId = totalEvents;
 		eventData[eventId] = Event ({

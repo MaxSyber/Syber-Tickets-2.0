@@ -138,11 +138,11 @@ describe('Tickets', () => {
 
   describe('Failure Cases' , () => {
     it("Rejects createEvent if Maxsupply is Too Low", async function () {
-    	await expect(tickets.connect(user1).createEvent("The Small Event", 42, tokens(10), tokens(8), 2)).to.be.revertedWith("Max supply must be within range 10-5000")
+    	await expect(tickets.connect(user1).createEvent("The Small Event", 42, tokens(10), tokens(8), 2)).to.be.revertedWith("Max supply must be within range 10-225")
     })
 
 	it("Rejects createEvent if Maxsupply is Too High", async function () {
-    	await expect(tickets.connect(user1).createEvent("The Small Event", 42, tokens(10), tokens(8), 80000)).to.be.revertedWith("Max supply must be within range 10-5000")
+    	await expect(tickets.connect(user1).createEvent("The Small Event", 42, tokens(10), tokens(8), 80000)).to.be.revertedWith("Max supply must be within range 10-225")
     })
 
 	it("Rejects createEvent if returnAmount > buyAmount", async function () {
