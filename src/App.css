@@ -7,6 +7,10 @@ body {
   font-family: Arial, sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Navbar Css*/
 
 .navbar {
@@ -605,4 +609,51 @@ body {
 }
 .modal:hover {
   border-color: rgba(0, 170, 255, 0.4);
+}
+
+/* Footer*/
+.footer {
+  background-color: #0f172a; /* dark navy */
+  color: #e2e8f0;
+  padding: 10px 20px;
+  margin-top: 60px;
+}
+
+.footer_content {
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.footer_left h3 {
+  margin-bottom: 10px;
+  color: #00aaff;
+}
+
+.footer_content {
+  color: #00aaff;
+}
+
+.footer_middle {
+  display: flex;
+  padding: 30px;
+  flex-direction: row;
+  gap: 100px;
+}
+
+.footer_middle a {
+  color: #94a3b8;
+  text-decoration: none;
+}
+
+.footer_middle a:hover {
+  color: #ffffff;
+}
+
+.footer_right {
+  text-align: right;
+  font-size: 0.9rem;
+  color: #94a3b8;
 }

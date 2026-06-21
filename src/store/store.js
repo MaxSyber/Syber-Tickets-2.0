@@ -6,8 +6,7 @@ import syberTickets from './reducers/syberTickets'
 export const store = configureStore({
   reducer: {
     provider,
-    syberTickets,
-    
+    syberTickets
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

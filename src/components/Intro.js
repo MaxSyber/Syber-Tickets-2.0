@@ -16,7 +16,7 @@ const Intro = () => {
     //console.log("ACTUAL STATE:", state)
 
     return(
-        <div>
+        <div id='about'>
             <div className='info'>
                 <h2 className='info_header'>Welcome to Syber Tickets!</h2>
                 <div className='info_text'>Syber Tickets is a web 3.0 ticketing application that's reshaping the very essence of event ticketing. 

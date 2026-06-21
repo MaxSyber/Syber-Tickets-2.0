@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import Navbar from './components/Navbar';
 import Intro from './components/Intro'
 import Events from './components/Events'
+import Footer from './components/Footer';
 
 import {loadProvider, loadNetwork, loadAccount, loadTickets} from './store/interactions'
 
@@ -38,6 +39,8 @@ function App() {
       <Intro />
 
       <Events />
+
+      <Footer />
       
     </div>
   );

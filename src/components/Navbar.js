@@ -1,5 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { loadAccount } from '../store/interactions'
+import { useState } from 'react'
+import CreateEvent from './CreateEvent'
 import Logo from '../assets/logo.png'
 
 const Navbar = () => {
@@ -7,10 +9,16 @@ const Navbar = () => {
     const chainId = useSelector(state => state.provider.chainId)
     const account = useSelector(state => state.provider.account)
     const dispatch = useDispatch()
+	const [isOpen, setIsOpen] = useState(false);
 
     const connectHandler = async () => {
 		await loadAccount(dispatch)
 	} 
+
+	const createHandler = (e) => {
+		e.preventDefault()
+		setIsOpen(true)
+	}
 
     return(
         <div>
@@ -30,13 +38,17 @@ const Navbar = () => {
 		 		</div>	 		
 			</div>
 			<ul className='navTopics'>
-				<li className='topic'><a href='' className='topicLink'>About</a></li>
-				<li className='topic'><a href='' className='topicLink'>Browse Events</a></li>
-				<li className='topic'><a href='' className='topicLink'>Create Event</a></li>
-				<li className='topic'><a href ='' className='topicLink'>F.A.Q</a></li>
+				<li className='topic'><a href='#about' className='topicLink'>About</a></li>
+				<li className='topic'><a href='#events' className='topicLink'>Browse Events</a></li>
+				<li className='topic'><a href='#' className='topicLink' onClick ={createHandler}>Create Event</a></li>
+				<li className='topic'><a href ='' className='topicLink'>F.A.Q</a></li>	
 			</ul>
+			{isOpen && (
+                <CreateEvent close={() => setIsOpen(false)} />
+            )}
 		</div>
     )
 }
 
 export default Navbar;
+

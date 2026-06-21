@@ -46,7 +46,7 @@ const Events = () => {
     }, [provider, tickets, events, account, buyingSuccess, returningSuccess, dispatch])
 
     return(
-        <div className='events_list'>
+        <div id='events' className='events_list'>
             {events.map(event => (
                 <div className='card' key={event.eventId}>
                     <div className='cart_left'>
