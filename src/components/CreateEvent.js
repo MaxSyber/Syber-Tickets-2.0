@@ -1,8 +1,8 @@
 import { newEvent } from "../store/interactions";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
+import Alert from "./Alert";
 
 const CreateEvent = ({close}) => {
     const [name, setName] = useState("");
@@ -10,10 +10,17 @@ const CreateEvent = ({close}) => {
     const [price, setPrice] = useState("");
     const [returnPrice, setReturnPrice] = useState("");
     const [maxSupply, setMaxSupply] = useState("");
+    const [showAlert, setShowAlert] = useState(false)
 
     const provider = useSelector(state => state.provider.connection)
     const account = useSelector((state) => state.provider.account)
     const tickets = useSelector(state=> state.syberTickets.contract)
+
+    const isCreating = useSelector(state => state.syberTickets.creating.isCreating)
+    const isSuccess = useSelector(state => state.syberTickets.creating.isSuccess)
+    const transactionHash = useSelector(state => state.syberTickets.creating.transactionHash)
+
+    const dispatch = useDispatch()
 
     const handleCreateEvent = async (e) => {
     e.preventDefault();
@@ -33,14 +40,23 @@ const CreateEvent = ({close}) => {
         const buyAmount = ethers.utils.parseUnits(price, "ether");
         const returnAmount = ethers.utils.parseUnits(returnPrice, "ether");
 
-        await newEvent(provider, tickets, name, eventDate, buyAmount, returnAmount, maxSupply);
-
-        close();
+        await newEvent(provider, tickets, name, eventDate, buyAmount, returnAmount, maxSupply, dispatch);
+        setShowAlert(true)
 
     } catch (err) {
         console.error("Create event failed:", err);
     }
     }
+
+  useEffect(() => {
+  if (isSuccess && showAlert) {
+    const timer = setTimeout(() => {
+      close()
+    }, 1200)
+
+    return () => clearTimeout(timer)
+  }
+}, [isSuccess, showAlert])
 
   return (
     <div className="overlay" onClick={close}>
@@ -104,6 +120,27 @@ const CreateEvent = ({close}) => {
 
         <button className = 'close_button' onClick={close}>Close</button>
       </div>
+      {isCreating ? (
+        <Alert
+          message="Event Creation Pending..."
+          transactionHash={null}
+          variant="info"
+          onClose={() => setShowAlert(false)}
+      />
+      ) : isSuccess && showAlert ? (
+      <Alert
+          message="Event Creation Successful"
+          transactionHash={transactionHash}
+          variant="success"
+          onClose={() => setShowAlert(false)}
+      />
+      ) : !isSuccess && showAlert ? (
+      <Alert
+          message="Event Creation Failed"
+          transactionHash={null}
+          variant="danger"
+          onClose={() => setShowAlert(false)}
+      />) : null}
     </div>
   );
 }

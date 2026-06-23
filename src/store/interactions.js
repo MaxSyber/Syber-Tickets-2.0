@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { setProvider, setNetwork, setAccount } from "./reducers/provider";
 import { setContract, eventsLoaded, ticketsRemainingLoaded, userBalancesLoaded, buyRequest, buySuccess, buyFail, returnRequest, 
-  returnSuccess, returnFail, cancelRequest, cancelSuccess, cancleFail } from "./reducers/syberTickets";
+  returnSuccess, returnFail, cancelRequest, cancelSuccess, cancleFail, eventRequest, eventSuccess, eventFail } from "./reducers/syberTickets";
 
 import SYBERTICKETS_ABI from '../abis/SYBERTICKETS_ABI.json'
 
@@ -125,18 +125,18 @@ export const returnTicket = async (provider, tickets, eventId, dispatch) => {
     }
 }
 
-export const newEvent = async (provider, tickets, name, date, buyAmount, returnAmount, maxSupply) => {
+export const newEvent = async (provider, tickets, name, date, buyAmount, returnAmount, maxSupply, dispatch) => {
     try {
+        dispatch(eventRequest())
         const signer = await provider.getSigner()
         let transaction = await tickets.connect(signer).createEvent(name, date, buyAmount, returnAmount, maxSupply)
         await transaction.wait()
-
+        dispatch(eventSuccess(transaction.hash))
         return transaction
+        
     } catch (error) {
-        console.error('newEvent error', error)
-        throw error
+        dispatch(eventFail())
     }
 }
-
 
 //admin cancel ticket

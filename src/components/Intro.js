@@ -5,7 +5,10 @@ import CreateEvent from './CreateEvent';
 const Intro = () => {
     const [isOpen, setIsOpen] = useState(false);
     const browseHandler = () => {
-        console.log('Browse Clicked')
+        const pan = document.getElementById("events")
+        if (pan) {
+        pan.scrollIntoView()
+        }
     }
 
     const createHandler = () => {
@@ -19,8 +22,8 @@ const Intro = () => {
         <div id='about'>
             <div className='info'>
                 <h2 className='info_header'>Welcome to Syber Tickets!</h2>
-                <div className='info_text'>Syber Tickets is a web 3.0 ticketing application that's reshaping the very essence of event ticketing. 
-                    Powered by the smart contracts on the Polygon Network, Syber Tickets uses the concept of soulbound NFTs to issue non-transferable event tickets.
+                <div className='info_text'>Syber Tickets is a Web3 ticketing application that reimagines event access using smart 
+                    contracts and soulbound NFTs to issue non-transferable tickets, helping reduce scalping and unauthorized resale.
                 </div>
                 <div className='info_butts'>
                     <button className="infoButton" onClick ={browseHandler}>Browse Events</button>

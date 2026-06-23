@@ -1,5 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit'
-
 import provider from './reducers/provider'
 import syberTickets from './reducers/syberTickets'
 

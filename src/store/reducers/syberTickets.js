@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+
 const initialState = {
   contract: null,
   events: [],
@@ -18,7 +19,12 @@ const initialState = {
     isCanceling: false,
     isSuccess: false,
     transactionHash: null
-  }
+  },
+  creating: {
+    isCreating: false,
+    isSuccess: false,
+    transactionHash: null
+  },
 }
 
 export const syberTickets = createSlice({
@@ -82,18 +88,33 @@ export const syberTickets = createSlice({
     cancelSuccess: (state, action) => {
       state.canceling.isCanceling = false
       state.canceling.isSuccess = true
-      state.swapping.transactionHash = action.payload
+      state.canceling.transactionHash = action.payload
     },
     cancleFail: (state, action) => {
       state.canceling.isCanceling = false
       state.swapping.isSuccess = false
       state.swapping.transactionHash = null
-    }
+    },
+    eventRequest: (state, action) => {
+      state.creating.isCreating = true
+      state.creating.isSuccess = false
+      state.creating.transactionHash = null
+    },
+    eventSuccess: (state, action) => {
+      state.creating.isCreating = false
+      state.creating.isSuccess = true
+      state.creating.transactionHash = action.payload
+    },
+    eventFail: (state, action) => {
+      state.creating.isCreating = false
+      state.creating.isSuccess = false
+      state.creating.transactionHash = null
+    },
   }
 })
 
 export const {
   setContract, eventsLoaded, buyRequest, buySuccess, buyFail, ticketsRemainingLoaded, userBalancesLoaded, returnRequest,
-  returnSuccess, returnFail, cancelRequest, cancelSuccess, cancleFail} = syberTickets.actions;
+  returnSuccess, returnFail, cancelRequest, cancelSuccess, cancleFail, eventRequest, eventSuccess, eventFail} = syberTickets.actions;
 
 export default syberTickets.reducer;
