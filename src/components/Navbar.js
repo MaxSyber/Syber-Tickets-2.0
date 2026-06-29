@@ -6,8 +6,8 @@ import Information from './Information'
 import Logo from '../assets/logo.png'
 
 const Navbar = () => {
-    const provider = useSelector(state => state.provider.connection)
-    const chainId = useSelector(state => state.provider.chainId)
+    //const provider = useSelector(state => state.provider.connection)
+    //const chainId = useSelector(state => state.provider.chainId)
     const account = useSelector(state => state.provider.account)
     const dispatch = useDispatch()
 	const [isOpen, setIsOpen] = useState(false)
@@ -47,8 +47,8 @@ const Navbar = () => {
 			<ul className='navTopics'>
 				<li className='topic'><a href='#about' className='topicLink'>About</a></li>
 				<li className='topic'><a href='#events' className='topicLink'>Browse Events</a></li>
-				<li className='topic'><a href='#' className='topicLink' onClick ={createHandler}>Create Event</a></li>
-				<li className='topic'><a href ='#' className='topicLink' onClick={infoHandler}>F.A.Q</a></li>	
+				<li className='topic'><a href='!#' className='topicLink' onClick ={createHandler}>Create Event</a></li>
+				<li className='topic'><a href ='!#' className='topicLink' onClick={infoHandler}>F.A.Q</a></li>	
 			</ul>
 			{isOpen && (
                 <CreateEvent close={() => setIsOpen(false)} />

@@ -36,7 +36,16 @@ export const syberTickets = createSlice({
     },
 
     eventsLoaded: (state, action) => {
-        state.events = action.payload
+      const incoming = action.payload
+      const merged = [...state.events]
+      for (let event of incoming) {
+        const exists = merged.find(e => e.eventId === event.eventId)
+        if (!exists) {
+          merged.push(event)
+        }
+      }
+      merged.sort((a, b) => b.eventId - a.eventId)
+      state.events = merged
     },
 
     ticketsRemainingLoaded: (state, action) => {
@@ -90,10 +99,10 @@ export const syberTickets = createSlice({
       state.canceling.isSuccess = true
       state.canceling.transactionHash = action.payload
     },
-    cancleFail: (state, action) => {
+    cancelFail: (state, action) => {
       state.canceling.isCanceling = false
-      state.swapping.isSuccess = false
-      state.swapping.transactionHash = null
+      state.canceling.isSuccess = false
+      state.canceling.transactionHash = null
     },
     eventRequest: (state, action) => {
       state.creating.isCreating = true
@@ -115,6 +124,6 @@ export const syberTickets = createSlice({
 
 export const {
   setContract, eventsLoaded, buyRequest, buySuccess, buyFail, ticketsRemainingLoaded, userBalancesLoaded, returnRequest,
-  returnSuccess, returnFail, cancelRequest, cancelSuccess, cancleFail, eventRequest, eventSuccess, eventFail} = syberTickets.actions;
+  returnSuccess, returnFail, cancelRequest, cancelSuccess, cancelFail, eventRequest, eventSuccess, eventFail} = syberTickets.actions;
 
 export default syberTickets.reducer;

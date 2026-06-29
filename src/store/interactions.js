@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { setProvider, setNetwork, setAccount } from "./reducers/provider";
 import { setContract, eventsLoaded, ticketsRemainingLoaded, userBalancesLoaded, buyRequest, buySuccess, buyFail, returnRequest, 
-  returnSuccess, returnFail, cancelRequest, cancelSuccess, cancleFail, eventRequest, eventSuccess, eventFail } from "./reducers/syberTickets";
+  returnSuccess, returnFail, eventRequest, eventSuccess, eventFail } from "./reducers/syberTickets";
 
 import SYBERTICKETS_ABI from '../abis/SYBERTICKETS_ABI.json'
 

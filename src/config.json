@@ -2,6 +2,14 @@
   "31337": {
     "syberTickets": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
-        }
-    }
+        },
+        "exploreURL": "#"
+    },
+
+  "84532": {
+    "syberTickets" : {
+      "address": "0x7424511775770fC6F89ce91F779901d637e3Cc51"
+    },
+    "exploreURL": "https://sepolia.basescan.org"
+  }
 }
