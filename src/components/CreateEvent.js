@@ -56,7 +56,7 @@ const CreateEvent = ({close}) => {
 
     return () => clearTimeout(timer)
   }
-}, [isSuccess, showAlert])
+}, [isSuccess, showAlert, close])
 
   return (
     <div className="overlay" onClick={close}>

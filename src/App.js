@@ -9,26 +9,26 @@ import {loadProvider, loadNetwork, loadAccount, loadTickets} from './store/inter
 function App() {
   const dispatch = useDispatch()
 
-  const loadBlockchainData = async () => {
-    // Initiate provider
-    const provider = await loadProvider(dispatch)
-
-    // Fetch current network's chainId
-    const chainId = await loadNetwork(provider, dispatch)
-
-    // Reload page when network changes
-    window.ethereum.on('chainChanged', () => {
-      window.location.reload()
-    })
-
-    window.ethereum.on('accountsChanged', async () => {await loadAccount(dispatch)})
-
-    await loadTickets(provider, chainId, dispatch)
-  }
-
   useEffect(() => {
+    const loadBlockchainData = async () => {
+      // Initiate provider
+      const provider = await loadProvider(dispatch)
+
+      // Fetch current network's chainId
+      const chainId = await loadNetwork(provider, dispatch)
+
+      // Reload page when network changes
+      window.ethereum.on('chainChanged', () => {
+        window.location.reload()
+      })
+
+      window.ethereum.on('accountsChanged', async () => {await loadAccount(dispatch)})
+
+      await loadTickets(provider, chainId, dispatch)
+    }
+
     loadBlockchainData()
-  }, [])
+  }, [dispatch])
 
   return (
     <div className="App">

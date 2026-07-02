@@ -1,4 +1,12 @@
 const Footer = () => {
+
+  const scrollToTop = (e) => {
+    e.preventDefault();
+    window.scrollTo({
+        top: 0,
+    });
+  }
+
   return (
     <footer className="footer">
       <div className="footer_content">
@@ -10,8 +18,8 @@ const Footer = () => {
 
         <div className="footer_middle">
           <a href="#events">Browse Events</a>
-          <a href="#">Create Event</a>
-          <a href="#">FAQ</a>
+          <a href="#!" onClick={scrollToTop}>Create Event</a>
+          <a href="#!" onClick={scrollToTop}>FAQ</a>
         </div>
 
         <div className="footer_right">

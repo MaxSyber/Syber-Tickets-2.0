@@ -1,4 +1,3 @@
-import { useSelector, useDispatch } from 'react-redux'
 import { useState } from 'react'
 import CreateEvent from './CreateEvent';
 
@@ -14,9 +13,6 @@ const Intro = () => {
     const createHandler = () => {
         setIsOpen(true)
     }
-    // Put this into componet to log state
-    //const state = useSelector(state => state)
-    //console.log("ACTUAL STATE:", state)
 
     return(
         <div id='about'>
