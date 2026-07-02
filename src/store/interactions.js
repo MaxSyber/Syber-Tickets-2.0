@@ -37,14 +37,24 @@ export const loadTickets = async (provider, chainId, dispatch) => {
 
 export const loadEvents = async (provider, tickets, dispatch) => {
     const block = await provider.getBlockNumber()
-    const eventStream = await tickets.queryFilter('EventCreated', 0, block)
+    const blockRange = 2000
+    const { chainId } = await provider.getNetwork()
+    const configuredStartBlock = config[chainId]?.syberTickets?.startBlock
+    const startBlock = configuredStartBlock ?? Math.max(0, block - blockRange + 1)
+    const eventStream = []
+
+    for (let fromBlock = startBlock; fromBlock <= block; fromBlock += blockRange) {
+        const toBlock = Math.min(fromBlock + blockRange - 1, block)
+        const events = await tickets.queryFilter('EventCreated', fromBlock, toBlock)
+        eventStream.push(...events)
+    }
+
     const events = eventStream.map(event => {
       return {hash: event.transactionHash, 
         eventId: event.args.eventId.toNumber(),
         name: event.args.name,
         date: event.args.date.toNumber(),
 
-        // keep financial values safe as strings
         buyAmount: event.args.buyAmount.toString(),
         returnAmount: event.args.returnAmount.toString(),
 
@@ -53,7 +63,6 @@ export const loadEvents = async (provider, tickets, dispatch) => {
         creator: event.args.creator
       }
     })
-
     dispatch(eventsLoaded(events))
 
     const ticketMaster = await tickets.ticketMaster()
