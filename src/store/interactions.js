@@ -36,37 +36,25 @@ export const loadTickets = async (provider, chainId, dispatch) => {
 }
 
 export const loadEvents = async (provider, tickets, dispatch) => {
-    const block = await provider.getBlockNumber()
-    const blockRange = 2000
-    const { chainId } = await provider.getNetwork()
-    const configuredStartBlock = config[chainId]?.syberTickets?.startBlock
-    const startBlock = configuredStartBlock ?? Math.max(0, block - blockRange + 1)
-    const eventStream = []
-
-    for (let fromBlock = startBlock; fromBlock <= block; fromBlock += blockRange) {
-        const toBlock = Math.min(fromBlock + blockRange - 1, block)
-        const events = await tickets.queryFilter('EventCreated', fromBlock, toBlock)
-        eventStream.push(...events)
-    }
-
-    const events = eventStream.map(event => {
-      return {hash: event.transactionHash, 
-        eventId: event.args.eventId.toNumber(),
-        name: event.args.name,
-        date: event.args.date.toNumber(),
-
-        buyAmount: event.args.buyAmount.toString(),
-        returnAmount: event.args.returnAmount.toString(),
-
-        maxSupply: event.args.maxSupply.toNumber(),
-
-        creator: event.args.creator
-      }
-    })
-    dispatch(eventsLoaded(events))
-
+    const totalEvents = await tickets.totalEvents()
     const ticketMaster = await tickets.ticketMaster()
-    for (let event of events) {
+    const events = []
+
+    for (let i = 0; i < totalEvents.toNumber(); i++) {
+        const eventData = await tickets.eventData(i)
+        const event = {
+            hash: null,
+            eventId: eventData.id.toNumber(),
+            name: eventData.name,
+            date: eventData.date.toNumber(),
+            buyAmount: eventData.buyAmount.toString(),
+            returnAmount: eventData.returnAmount.toString(),
+            maxSupply: eventData.maxSupply.toNumber(),
+            creator: eventData.creator
+        }
+
+        events.push(event)
+
         const eventId = event.eventId
         const ticketsRemaining = await tickets.balanceOf(ticketMaster, eventId)
 
@@ -75,6 +63,8 @@ export const loadEvents = async (provider, tickets, dispatch) => {
             value: Number(ticketsRemaining)
         }))
     }
+
+    dispatch(eventsLoaded(events))
 }
 
 export const loadEventData = async (provider, tickets, events, dispatch) => {
